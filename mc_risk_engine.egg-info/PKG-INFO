@@ -1,0 +1,371 @@
+Metadata-Version: 2.4
+Name: mc-risk-engine
+Version: 0.1.0
+Summary: A Monte Carlo simulation engine for portfolio risk management
+Home-page: https://github.com/yourusername/mc-risk-engine
+Author: Your Name
+Author-email: your.email@example.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Financial and Insurance Industry
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Topic :: Office/Business :: Financial
+Classifier: Topic :: Scientific/Engineering :: Mathematics
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.21.0
+Requires-Dist: pandas>=1.3.0
+Requires-Dist: scipy>=1.7.0
+Requires-Dist: matplotlib>=3.4.0
+Requires-Dist: seaborn>=0.11.0
+Requires-Dist: yfinance>=0.1.70
+Requires-Dist: jupyter>=1.0.0
+Requires-Dist: notebook>=6.4.0
+Requires-Dist: scikit-learn>=1.0.0
+Requires-Dist: plotly>=5.0.0
+Requires-Dist: tqdm>=4.62.0
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: black; extra == "dev"
+Requires-Dist: flake8; extra == "dev"
+Requires-Dist: mypy; extra == "dev"
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# Monte Carlo Portfolio Risk Engine
+
+A comprehensive Python library for portfolio risk management using Monte Carlo simulation. This library provides tools for computing Value at Risk (VaR), Conditional Value at Risk (CVaR), backtesting risk models, and visualizing risk metrics.
+
+[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## 🚀 Features
+
+- **Multiple Distribution Models**: Normal, Student-t, and Bootstrap approaches
+- **Comprehensive Risk Metrics**: VaR, CVaR, Expected Shortfall, Maximum Drawdown
+- **Advanced Backtesting**: Rolling window validation with Kupiec and Christoffersen tests
+- **Rich Visualizations**: Price paths, return distributions, backtesting results, correlation heatmaps
+- **Interactive Dashboards**: Plotly-based risk management dashboards
+- **Flexible API**: Easy-to-use interface suitable for both beginners and experts
+- **Export Capabilities**: Results can be exported to Excel, CSV, or JSON formats
+
+## 📊 What is Monte Carlo VaR?
+
+**Value at Risk (VaR)** quantifies the potential loss in portfolio value over a specific time period at a given confidence level. For example:
+- 1-day 95% VaR of $10,000 means there's a 5% chance of losing more than $10,000 in one day
+
+**Monte Carlo simulation** generates thousands of possible future scenarios based on statistical models fitted to historical data, providing a comprehensive view of potential portfolio outcomes.
+
+## 🛠️ Installation
+
+### Using pip (when published)
+```bash
+pip install mc-risk-engine
+```
+
+### From source
+```bash
+git clone https://github.com/yourusername/mc-risk-engine.git
+cd mc-risk-engine
+pip install -r requirements.txt
+pip install -e .
+```
+
+## 📋 Requirements
+
+- Python 3.8+
+- numpy >= 1.21.0
+- pandas >= 1.3.0
+- scipy >= 1.7.0
+- matplotlib >= 3.4.0
+- seaborn >= 0.11.0
+- yfinance >= 0.1.70
+- jupyter >= 1.0.0
+- scikit-learn >= 1.0.0
+- plotly >= 5.0.0
+- tqdm >= 4.62.0
+
+## 🏃‍♂️ Quick Start
+
+```python
+from mcrisk import RiskEngine
+
+# Initialize the risk engine
+engine = RiskEngine(
+    tickers=['SPY', 'AAPL', 'QQQ'], 
+    lookback=250
+)
+
+# Load historical data
+engine.load_data(period="2y")
+
+# Compute Monte Carlo VaR and CVaR
+var95, cvar95 = engine.compute_mc_var(alpha=0.95, sims=10000)
+
+# Run backtesting
+backtest_results = engine.backtest(alpha=0.95)
+
+print(f"95% VaR: {var95:.4f}")
+print(f"95% CVaR: {cvar95:.4f}")
+```
+
+## 📖 Documentation
+
+### Basic Usage
+
+#### 1. Initialize Risk Engine
+```python
+engine = RiskEngine(
+    tickers=['SPY', 'AAPL', 'QQQ'],
+    portfolio_weights=[0.4, 0.3, 0.3],  # Optional, defaults to equal weights
+    lookback=250,                        # Days for parameter estimation
+    random_seed=42                       # For reproducible results
+)
+```
+
+#### 2. Load Data
+```python
+# From Yahoo Finance
+prices = engine.load_data(period="2y")
+
+# From CSV file
+prices = engine.load_data_from_csv("historical_prices.csv")
+```
+
+#### 3. Fit Distribution Models
+```python
+# Normal distribution
+normal_params = engine.fit_distribution('normal')
+
+# Student-t distribution (better for fat tails)
+t_params = engine.fit_distribution('t')
+
+# Bootstrap (non-parametric)
+bootstrap_params = engine.fit_distribution('bootstrap')
+```
+
+#### 4. Compute Risk Metrics
+```python
+# Basic VaR and CVaR
+var95, cvar95 = engine.compute_mc_var(
+    alpha=0.95,           # Confidence level
+    sims=10000,           # Number of simulations
+    horizon=1,            # Days ahead
+    distribution='normal' # Distribution type
+)
+
+# Comprehensive risk analysis
+risk_metrics = engine.compute_comprehensive_risk_metrics(
+    confidence_levels=[0.95, 0.99],
+    sims=10000,
+    initial_value=1000000  # Portfolio value in dollars
+)
+```
+
+#### 5. Backtest Models
+```python
+# Run rolling window backtesting
+backtest_results = engine.backtest(
+    alpha=0.95,
+    window_size=250,
+    n_simulations=5000,
+    distribution='normal'
+)
+
+# Get backtesting statistics
+summary = engine.backtester.get_backtest_summary()
+```
+
+#### 6. Visualizations
+```python
+# Plot return distribution with VaR markers
+engine.plot_return_distribution()
+
+# Plot simulated price paths
+engine.plot_price_paths(n_paths=100)
+
+# Plot backtesting results
+engine.plot_backtest_results()
+
+# Create interactive dashboard
+dashboard = engine.create_risk_dashboard()
+dashboard.show()
+```
+
+### Advanced Features
+
+#### Risk Decomposition
+```python
+# Analyze each asset's contribution to portfolio risk
+from mcrisk import RiskCalculator
+
+calculator = RiskCalculator()
+decomposition = calculator.calculate_risk_decomposition(
+    asset_returns, portfolio_weights, confidence_level=0.95
+)
+```
+
+#### Custom Parameters
+```python
+# Use custom start/end dates
+engine = RiskEngine(
+    tickers=['SPY', 'AAPL'],
+    start_date='2020-01-01',
+    end_date='2023-12-31'
+)
+
+# Rolling parameter estimation
+rolling_params = engine.parameter_estimator.estimate_rolling_parameters(
+    window_size=250, distribution='normal'
+)
+```
+
+#### Export Results
+```python
+# Export to Excel
+engine.export_results('results.xlsx', format='excel')
+
+# Export to JSON
+engine.export_results('results.json', format='json')
+```
+
+## 📊 Example Output
+
+```
+Monte Carlo VaR 95%: 0.0187 (1.87%)
+Monte Carlo CVaR 95%: 0.0241 (2.41%)
+
+Comprehensive Risk Metrics ($1M Portfolio):
+==================================================
+Expected Daily Return   : 0.0008 (0.08%)
+Daily Volatility        : 0.0121 (1.21%)
+Skewness               : -0.1234
+Kurtosis               : 2.8765
+95% VaR (Dollar)       : $18,673.45
+95% CVaR (Dollar)      : $24,112.89
+99% VaR (Dollar)       : $28,901.23
+99% CVaR (Dollar)      : $34,567.89
+
+Backtest Results for VaR 95%:
+- Expected breach rate: 5.0%
+- Actual breach rate: 4.8%
+- Total breaches: 12
+- Kupiec test p-value: 0.8234
+- Model accepted at 5% level
+```
+
+## 📈 Sample Visualizations
+
+The library generates several types of visualizations:
+
+1. **Return Distribution with VaR/CVaR markers**
+2. **Simulated Price Paths** showing potential future scenarios
+3. **Backtesting Results** comparing predicted vs actual losses
+4. **Correlation Heatmaps** for portfolio assets
+5. **Interactive Risk Dashboards** with multiple metrics
+
+## 🧪 Running the Demo
+
+Explore the full capabilities using the provided Jupyter notebook:
+
+```bash
+jupyter notebook demo_notebook.ipynb
+```
+
+The demo covers:
+- Data loading and preparation
+- Parameter estimation for different distributions
+- Monte Carlo simulation and risk calculation
+- Comprehensive backtesting analysis
+- Advanced visualizations and dashboards
+
+## 🎯 Use Cases
+
+- **Portfolio Risk Management**: Daily VaR reporting for investment portfolios
+- **Regulatory Compliance**: Basel III capital requirements and stress testing
+- **Academic Research**: Comparing VaR methodologies and backtesting approaches
+- **Quantitative Analysis**: Building blocks for more sophisticated risk models
+- **Risk Budgeting**: Allocating risk across different portfolio components
+
+## 🔬 Model Validation
+
+The library includes comprehensive backtesting with statistical tests:
+
+- **Kupiec Test**: Validates unconditional coverage (breach frequency)
+- **Christoffersen Test**: Tests for independence of breaches
+- **Breach Analysis**: Examines clustering and excess loss patterns
+
+## ⚡ Performance Notes
+
+- **Simulation Speed**: ~10,000 Monte Carlo paths in 1-2 seconds
+- **Recommended Settings**: 
+  - Daily VaR: 10,000+ simulations
+  - Backtesting: 5,000+ simulations per window (balance speed vs accuracy)
+  - Bootstrap: Slower than parametric methods but more robust
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Development Setup
+```bash
+git clone https://github.com/yourusername/mc-risk-engine.git
+cd mc-risk-engine
+pip install -r requirements.txt
+pip install -e .
+```
+
+### Running Tests
+```bash
+python -m pytest tests/
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+- **Documentation**: [Link to detailed docs]
+- **Issues**: [GitHub Issues](https://github.com/yourusername/mc-risk-engine/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/yourusername/mc-risk-engine/discussions)
+
+## 🏆 Resume Bullet Point
+
+```
+• Monte Carlo Portfolio VaR/CVaR Backtester (Python)
+  – Built a Python library that ingests market data, fits return distributions, 
+    and runs 10k Monte Carlo simulations to compute 95% VaR and CVaR
+  – Backtested rolling-window breaches, plotted actual vs. simulated losses, 
+    and documented via Jupyter notebook
+```
+
+## 🔮 Future Enhancements
+
+- Dynamic correlation models (DCC-GARCH)
+- Regime-switching frameworks
+- Alternative risk measures (Expected Drawdown, etc.)
+- Real-time risk monitoring capabilities
+- Integration with popular portfolio management platforms
+
+## 📚 References
+
+- Jorion, P. (2007). Value at Risk: The New Benchmark for Managing Financial Risk
+- McNeil, A., Frey, R., & Embrechts, P. (2015). Quantitative Risk Management
+- Dowd, K. (2005). Measuring Market Risk
+
+---
+
+**Built with ❤️ for the quantitative finance community** 
