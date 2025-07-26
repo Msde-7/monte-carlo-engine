@@ -3,6 +3,7 @@ import pandas as pd
 from typing import Dict, Any, Optional, Tuple, List
 from datetime import datetime, timedelta
 import warnings
+from scipy import stats
 warnings.filterwarnings('ignore')
 
 from .parameter_estimation import ParameterEstimator

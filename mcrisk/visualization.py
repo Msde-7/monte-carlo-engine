@@ -146,5 +146,5 @@ class RiskVisualizer:
     
     def create_risk_dashboard(self, risk_results: Dict[str, Any], 
                             backtest_results: Optional[pd.DataFrame] = None) -> None:
-        """Create a simple risk dashboard (placeholder for plotly version)."""
-        print("Interactive dashboard requires plotly - use individual plot methods instead") 
+        """Create a simple risk dashboard (placeholde)."""
+        print("placheholder for now :( )") 

@@ -27,8 +27,9 @@ class DataLoader:
             else:
                 data = yf.download(self.tickers, period=period, progress=False)
             
+            # Handle different yfinance data structures
             if len(self.tickers) == 1:
-                # For single ticker, data is already a DataFrame
+                # Single ticker case
                 if 'Adj Close' in data.columns:
                     prices = data[['Adj Close']].copy()
                     prices.columns = self.tickers
@@ -38,13 +39,23 @@ class DataLoader:
                 else:
                     raise ValueError("No price column found in data")
             else:
-                # For multiple tickers, try Adj Close first, fallback to Close
-                if 'Adj Close' in data.columns:
-                    prices = data['Adj Close']
-                elif 'Close' in data.columns:
-                    prices = data['Close']
+                # Multiple tickers case - check if we have multi-level columns
+                if hasattr(data.columns, 'levels') or isinstance(data.columns, pd.MultiIndex):
+                    # Multi-level columns from yfinance
+                    if 'Adj Close' in data.columns.get_level_values(0):
+                        prices = data['Adj Close']
+                    elif 'Close' in data.columns.get_level_values(0):
+                        prices = data['Close']
+                    else:
+                        raise ValueError("No price column found in multi-level data")
                 else:
-                    raise ValueError("No price column found in data")
+                    # Single level columns (fallback)
+                    if 'Adj Close' in data.columns:
+                        prices = data['Adj Close']
+                    elif 'Close' in data.columns:
+                        prices = data['Close']
+                    else:
+                        raise ValueError("No price column found in data")
             
             prices = prices.dropna()
             
@@ -53,9 +64,9 @@ class DataLoader:
             
             self.prices = prices
             print(f"Loaded data for {len(self.tickers)} assets: {len(prices)} observations")
-            
+
             return prices
-            
+
         except Exception as e:
             raise RuntimeError(f"Failed to fetch data: {str(e)}")
     

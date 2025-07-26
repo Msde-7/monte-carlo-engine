@@ -12,12 +12,6 @@ Compute Value at Risk (VaR), Conditional Value at Risk (CVaR), backtest risk mod
 - Visualization tools for risk analysis
 - Easy-to-use API for portfolio risk management
 
-## What is Monte Carlo VaR?
-
-Value at Risk (VaR) measures potential portfolio losses over a specific time period at a given confidence level. For example, a 1-day 95% VaR of $10,000 means there's a 5% chance of losing more than $10,000 in one day.
-
-Monte Carlo simulation generates thousands of possible future scenarios based on statistical models fitted to historical data.
-
 ## Installation
 
 ```bash
